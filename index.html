@@ -502,15 +502,18 @@
         <div class="contact-info-item"><div class="label">Hours</div><div class="value muted">Monday to Saturday, 10:00 AM – 6:30 PM</div></div>
         <div class="contact-info-item"><div class="label">Service area</div><div class="value muted">On-site support within the region · Remote support available anywhere</div></div>
       </div>
-      <form id="contact-form">
+      <form id="contact-form" action="https://formsubmit.co/sales@expertinc.co.in" method="POST">
+        <input type="hidden" name="_subject" value="New inquiry from Expert Inc. website">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
         <div class="form-row">
-          <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required placeholder="Jordan Lee"></div>
-          <div class="field"><label for="email">Email</label><input type="email" id="email" name="email" required placeholder="you@company.com"></div>
+          <div class="field"><label for="name">Name</label><input type="text" id="name" name="Name" required placeholder="Jordan Lee"></div>
+          <div class="field"><label for="email">Email</label><input type="email" id="email" name="Email" required placeholder="you@company.com"></div>
         </div>
         <div class="form-row">
-          <div class="field"><label for="company">Company</label><input type="text" id="company" name="company" placeholder="Company name"></div>
+          <div class="field"><label for="company">Company</label><input type="text" id="company" name="Company" placeholder="Company name"></div>
           <div class="field"><label for="interest">Interested in</label>
-            <select id="interest" name="interest">
+            <select id="interest" name="Interested in">
               <option>Cybersecurity</option>
               <option>Computer Hardware</option>
               <option>Networking</option>
@@ -519,10 +522,9 @@
             </select>
           </div>
         </div>
-        <div class="field"><label for="message">Message</label><textarea id="message" name="message" placeholder="What's going on with your systems?"></textarea></div>
+        <div class="field"><label for="message">Message</label><textarea id="message" name="Message" placeholder="What's going on with your systems?"></textarea></div>
         <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send Message</button>
-        <p class="form-note">Clicking "Send Message" opens your email app with this addressed to sales@expertinc.co.in.</p>
-        <div class="form-success" id="form-success">Opening your email app now — if it doesn't open, email us directly at sales@expertinc.co.in.</div>
+        <p class="form-note">Your message goes straight to our inbox — we'll reply within one business day.</p>
       </form>
     </div>
   </div>
@@ -548,30 +550,6 @@
     var heroSvg = document.getElementById('hero-illustration');
     if (heroSvg && heroSvg.pauseAnimations) { heroSvg.pauseAnimations(); }
   }
-
-  document.getElementById('contact-form').addEventListener('submit', function(e){
-    e.preventDefault();
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var company = document.getElementById('company').value;
-    var interest = document.getElementById('interest').value;
-    var message = document.getElementById('message').value;
-
-    var subject = 'Inquiry from ' + name + ' — ' + interest;
-    var body =
-      'Name: ' + name + '\n' +
-      'Email: ' + email + '\n' +
-      'Company: ' + company + '\n' +
-      'Interested in: ' + interest + '\n\n' +
-      'Message:\n' + message;
-
-    var mailtoLink = 'mailto:sales@expertinc.co.in'
-      + '?subject=' + encodeURIComponent(subject)
-      + '&body=' + encodeURIComponent(body);
-
-    window.location.href = mailtoLink;
-    document.getElementById('form-success').style.display = 'block';
-  });
 </script>
 
 <a href="https://wa.me/919718270873?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20your%20services." target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat with us on WhatsApp">
