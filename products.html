@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — Expert Inc.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg-void:#090c0a;
+    --bg-panel:#0f1512;
+    --bg-panel-raised:#151c18;
+    --line:#222b25;
+    --line-bright:#334038;
+    --copper:#c9884f;
+    --copper-bright:#e5aa74;
+    --signal:#5fd8c4;
+    --alert:#e2574c;
+    --text-primary:#e9ece7;
+    --text-muted:#8b9690;
+    --text-dim:#5a6560;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(95,216,196,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(95,216,196,0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img,svg{display:block; max-width:100%;}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:1;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--signal);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--signal);
+    border-radius:50%;
+    box-shadow:0 0 8px var(--signal);
+  }
+
+  h1,h2,h3,h4{
+    font-family:var(--mono);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.15;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    z-index:50;
+    background:rgba(9,12,10,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:72px;
+  }
+  .logo{
+    font-family:var(--mono);
+    font-weight:800;
+    font-size:17px;
+    letter-spacing:0.02em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo .dot{
+    width:9px; height:9px;
+    background:var(--copper);
+    border-radius:2px;
+    transform:rotate(45deg);
+    box-shadow:0 0 10px rgba(201,136,79,0.7);
+  }
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:36px;
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+  }
+  .nav-links a{
+    color:var(--text-muted);
+    transition:color .2s;
+    position:relative;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--text-primary);}
+  .nav-status{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .pulse-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 6px var(--signal);
+    animation:blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:12px 22px;
+    border-radius:2px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:all .2s;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .btn-primary{
+    background:var(--copper);
+    color:#12100c;
+    font-weight:700;
+  }
+  .btn-primary:hover{background:var(--copper-bright); box-shadow:0 0 24px rgba(201,136,79,0.35);}
+  .btn-ghost{
+    border-color:var(--line-bright);
+    color:var(--text-primary);
+  }
+  .btn-ghost:hover{border-color:var(--signal); color:var(--signal);}
+  .btn-small{padding:9px 16px; font-size:12px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:110px;
+    padding-bottom:60px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:48px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(34px, 4.4vw, 54px);
+    margin:20px 0 22px;
+    color:var(--text-primary);
+  }
+  .hero h1 span{color:var(--copper-bright);}
+  .hero p.lede{
+    font-size:17px;
+    color:var(--text-muted);
+    max-width:520px;
+    margin-bottom:34px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:28px;}
+  .trust-line{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+    border-left:2px solid var(--line-bright);
+    padding-left:12px;
+  }
+
+  .diagram-wrap{
+    position:relative;
+    aspect-ratio:1/1;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{position:relative; padding:110px 0; z-index:1;}
+  .section-head{margin-bottom:56px; max-width:640px;}
+  .section-head h2{
+    font-size:clamp(26px,3vw,36px);
+    margin-top:14px;
+    color:var(--text-primary);
+  }
+  .section-head p{color:var(--text-muted); margin-top:14px; font-size:15.5px;}
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--line-bright) 20%, var(--line-bright) 80%, transparent);
+    position:relative;
+  }
+  .divider::before{
+    content:"";
+    position:absolute; top:-3px; left:50%;
+    width:7px; height:7px;
+    background:var(--copper);
+    transform:translateX(-50%) rotate(45deg);
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:24px;
+  }
+  .service-card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:32px 28px;
+    transition:border-color .25s, transform .25s;
+  }
+  .service-card:hover{border-color:var(--copper); transform:translateY(-4px);}
+  .service-icon{
+    width:44px; height:44px;
+    margin-bottom:22px;
+    color:var(--signal);
+  }
+  .service-card h3{
+    font-size:18px;
+    color:var(--text-primary);
+    margin-bottom:6px;
+  }
+  .service-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    margin-bottom:16px;
+    display:block;
+  }
+  .service-card ul{margin-top:16px;}
+  .service-card li{
+    font-size:14px;
+    color:var(--text-muted);
+    padding:8px 0;
+    border-top:1px solid var(--line);
+    display:flex;
+    gap:10px;
+  }
+  .service-card li:first-child{border-top:none;}
+  .service-card li::before{
+    content:"▸";
+    color:var(--copper);
+    flex-shrink:0;
+  }
+
+  /* ---------- PROCESS ---------- */
+
+  /* ---------- STATS TERMINAL ---------- */
+  .terminal{
+    background:#0c1110;
+    border:1px solid var(--line-bright);
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 0 60px rgba(95,216,196,0.05);
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 16px;
+    background:var(--bg-panel-raised);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .terminal-bar .tdot{width:10px; height:10px; border-radius:50%; background:var(--line-bright);}
+  .terminal-body{
+    padding:32px;
+    font-family:var(--mono);
+    font-size:14px;
+  }
+  .stat-line{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    align-items:baseline;
+  }
+  .stat-line:last-child{border-bottom:none;}
+  .stat-cmd{color:var(--text-dim);}
+  .stat-cmd::before{content:"$ "; color:var(--signal);}
+  .stat-val{color:var(--copper-bright); font-weight:700; font-size:20px;}
+  .cursor{
+    display:inline-block;
+    width:8px; height:16px;
+    background:var(--signal);
+    animation:blink 1s step-end infinite;
+    vertical-align:middle;
+    margin-left:2px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .about-grid p{color:var(--text-muted); margin-bottom:16px; font-size:15.5px;}
+  .about-panel{
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    border-radius:3px;
+    padding:26px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .about-panel .row{display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--line);}
+  .about-panel .row:first-child{border-top:none;}
+  .about-panel .row span:last-child{color:var(--text-primary);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:48px;
+  }
+  .contact-info-item{margin-bottom:28px;}
+  .contact-info-item .label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:6px;
+  }
+  .contact-info-item .value{font-size:15.5px; color:var(--text-primary);}
+  .contact-info-item .value.muted{color:var(--text-muted); font-size:14px;}
+
+  form{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:32px;
+  }
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-dim);
+    display:block; margin-bottom:8px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%;
+    background:#0c1110;
+    border:1px solid var(--line-bright);
+    border-radius:2px;
+    padding:12px 14px;
+    color:var(--text-primary);
+    font-family:var(--sans);
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--signal);}
+  .field textarea{resize:vertical; min-height:100px;}
+  .form-note{
+    font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:14px;
+  }
+  .form-success{
+    display:none;
+    font-family:var(--mono); font-size:13px; color:var(--signal);
+    padding:14px; border:1px solid var(--signal); border-radius:2px; margin-top:16px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0;
+  }
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .footer-links{display:flex; gap:26px; font-family:var(--mono); font-size:12px; color:var(--text-dim);}
+  .footer-links a:hover{color:var(--signal);}
+  .copyright{font-family:var(--mono); font-size:12px; color:var(--text-dim);}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, .btn:focus-visible{
+    outline:2px solid var(--signal); outline-offset:2px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .hero-grid{grid-template-columns:1fr;}
+    .diagram-wrap{max-width:380px; margin-top:20px;}
+    .services-grid{grid-template-columns:1fr;}
+    .about-grid{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .hero-ctas{flex-direction:column; align-items:stretch;}
+    .wrap{padding:0 20px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+    html{scroll-behavior:auto;}
+  }
+
+/* ---------- PRODUCTS PAGE ---------- */
+.page-banner{
+  padding:150px 0 70px;
+  border-bottom:1px solid var(--line);
+}
+.page-banner h1{
+  font-size:clamp(30px,4vw,46px);
+  margin:16px 0 18px;
+  color:var(--text-primary);
+  max-width:760px;
+}
+.page-banner p{
+  color:var(--text-muted);
+  font-size:16px;
+  max-width:600px;
+}
+
+.brands-strip{
+  padding:50px 0;
+  border-bottom:1px solid var(--line);
+}
+.brands-strip .eyebrow{margin-bottom:18px;}
+.brands-strip h2{
+  font-size:clamp(18px,2vw,22px);
+  color:var(--text-primary);
+  margin-bottom:28px;
+  font-weight:600;
+}
+.brand-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+  gap:14px;
+}
+.brand-badge{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:64px;
+  border:1px solid var(--line);
+  border-radius:3px;
+  background:var(--bg-panel);
+  font-family:var(--mono);
+  font-size:14px;
+  letter-spacing:0.04em;
+  color:var(--text-muted);
+  transition:border-color .2s, color .2s;
+}
+.brand-badge:hover{border-color:var(--signal); color:var(--text-primary);}
+
+.category-block{padding:80px 0;}
+.category-block + .category-block{border-top:1px solid var(--line);}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:24px;
+}
+.product-card{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  transition:border-color .25s, transform .25s;
+}
+.product-card:hover{border-color:var(--copper); transform:translateY(-4px);}
+.product-icon{
+  width:38px; height:38px;
+  color:var(--signal);
+  margin-bottom:18px;
+}
+.product-card h3{
+  font-size:16.5px;
+  color:var(--text-primary);
+  margin-bottom:8px;
+}
+.product-desc{
+  font-size:13.5px;
+  color:var(--text-muted);
+  margin-bottom:18px;
+}
+.product-specs{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--text-dim);
+  margin-bottom:20px;
+  flex-grow:1;
+}
+.product-specs .spec-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:7px 0;
+  border-top:1px solid var(--line);
+}
+.product-specs .spec-row:first-child{border-top:none;}
+.product-specs .spec-row span:last-child{color:var(--text-muted); text-align:right;}
+.product-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+.product-price{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--copper-bright);
+  font-weight:700;
+}
+.product-price span{
+  display:block;
+  font-size:10px;
+  color:var(--text-dim);
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+.cta-banner{
+  text-align:center;
+  padding:90px 0;
+  border-top:1px solid var(--line);
+}
+.cta-banner h2{
+  font-size:clamp(22px,2.8vw,30px);
+  margin:14px 0 24px;
+  color:var(--text-primary);
+}
+
+@media (max-width:920px){
+  .product-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo"><span class="dot"></span>EXPERT INC.</a>
+    <nav class="nav-links">
+      <a href="index.html#services">Services</a>
+      <a href="products.html" style="color:var(--text-primary);">Products</a>
+      <a href="index.html#why-us">Why Us</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:22px;">
+      <div class="nav-status"><span class="pulse-dot"></span>Systems Online</div>
+      <a href="index.html#contact" class="btn btn-primary btn-small">Get a Quote</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= PAGE BANNER ================= -->
+<section class="page-banner">
+  <div class="wrap">
+    <div class="eyebrow">Brands We Work With</div>
+    <h1>Real hardware, real software, from names you already trust.</h1>
+    <p>We're an authorized reseller and support partner for the brands below — every quote is built around what you already run, or what we recommend for it.</p>
+  </div>
+</section>
+
+<!-- ================= SERVERS, WORKSTATIONS & LAPTOPS ================= -->
+<section class="category-block" id="servers-workstations">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">01 — Servers, Workstations &amp; Laptops</div>
+      <h2>Business-grade machines, properly configured.</h2>
+      <p>We supply, image, and support hardware from these manufacturers.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">Dell</div>
+      <div class="brand-badge">HP</div>
+      <div class="brand-badge">Lenovo</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FIREWALL & NETWORK SECURITY ================= -->
+<section class="category-block" id="firewall-security">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">02 — Firewall &amp; Network Security</div>
+      <h2>The appliances that stand at your network's edge.</h2>
+      <p>Sourced, configured, and kept patched as part of your security plan.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">Sophos</div>
+      <div class="brand-badge">SonicWall</div>
+      <div class="brand-badge">Fortinet (FortiGate)</div>
+      <div class="brand-badge">Cisco</div>
+      <div class="brand-badge">Juniper</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BACKUP & STORAGE ================= -->
+<section class="category-block" id="backup-storage">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">03 — Backup &amp; Storage</div>
+      <h2>Local storage that backs up automatically.</h2>
+      <p>NAS appliances we install, encrypt, and monitor for you.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">Synology</div>
+      <div class="brand-badge">QNAP</div>
+      <div class="brand-badge">Asustor</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NETWORKING ================= -->
+<section class="category-block" id="networking">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">04 — Networking</div>
+      <h2>The wires and radios that hold it together.</h2>
+      <p>Design, installation, and configuration for every layer of your network.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">Access Points</div>
+      <div class="brand-badge">Network Switches</div>
+      <div class="brand-badge">Structured Cabling</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CYBER SECURITY ================= -->
+<section class="category-block" id="cyber-security">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">05 — Cyber Security</div>
+      <h2>Defense that runs around the clock.</h2>
+      <p>Services layered on top of the hardware, not sold as a one-time box.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">Endpoint Protection</div>
+      <div class="brand-badge">24/7 Threat Monitoring</div>
+      <div class="brand-badge">VAPT &amp; Compliance</div>
+      <div class="brand-badge">Security Awareness Training</div>
+      <div class="brand-badge">Email &amp; Phishing Defense</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOFTWARE ================= -->
+<section class="category-block" id="software">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">06 — Software</div>
+      <h2>Licensing and deployment, handled for you.</h2>
+      <p>We help you license, install, and manage updates across your fleet.</p>
+    </div>
+    <div class="brand-grid">
+      <div class="brand-badge">TS Plus</div>
+      <div class="brand-badge">Autodesk</div>
+      <div class="brand-badge">Microsoft</div>
+      <div class="brand-badge">Adobe</div>
+    </div>
+  </div>
+</section>
+
+<footer style="margin-top:0;">
+  <div class="wrap footer-row">
+    <a href="index.html" class="logo" style="font-size:14px;"><span class="dot"></span>EXPERT INC.</a>
+    <div class="footer-links">
+      <a href="index.html#services">Services</a>
+      <a href="products.html">Products</a>
+      <a href="index.html#why-us">Why Us</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div class="copyright">© 2026 Expert Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>

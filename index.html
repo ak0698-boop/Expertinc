@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expert Inc. — Cybersecurity, Hardware &amp; Networking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+    --bg-void:#090c0a;
+    --bg-panel:#0f1512;
+    --bg-panel-raised:#151c18;
+    --line:#222b25;
+    --line-bright:#334038;
+    --copper:#c9884f;
+    --copper-bright:#e5aa74;
+    --signal:#5fd8c4;
+    --alert:#e2574c;
+    --text-primary:#e9ece7;
+    --text-muted:#8b9690;
+    --text-dim:#5a6560;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(95,216,196,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(95,216,196,0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  img,svg{display:block; max-width:100%;}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:1;
+  }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--signal);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background:var(--signal);
+    border-radius:50%;
+    box-shadow:0 0 8px var(--signal);
+  }
+
+  h1,h2,h3,h4{
+    font-family:var(--mono);
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.15;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    z-index:50;
+    background:rgba(9,12,10,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    height:72px;
+  }
+  .logo{
+    font-family:var(--mono);
+    font-weight:800;
+    font-size:17px;
+    letter-spacing:0.02em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .logo .dot{
+    width:9px; height:9px;
+    background:var(--copper);
+    border-radius:2px;
+    transform:rotate(45deg);
+    box-shadow:0 0 10px rgba(201,136,79,0.7);
+  }
+  .nav-links{
+    display:flex;
+    align-items:center;
+    gap:36px;
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+  }
+  .nav-links a{
+    color:var(--text-muted);
+    transition:color .2s;
+    position:relative;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--text-primary);}
+  .nav-status{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:11px;
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .pulse-dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 6px var(--signal);
+    animation:blink 2.4s ease-in-out infinite;
+  }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.03em;
+    text-transform:uppercase;
+    padding:12px 22px;
+    border-radius:2px;
+    cursor:pointer;
+    border:1px solid transparent;
+    transition:all .2s;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .btn-primary{
+    background:var(--copper);
+    color:#12100c;
+    font-weight:700;
+  }
+  .btn-primary:hover{background:var(--copper-bright); box-shadow:0 0 24px rgba(201,136,79,0.35);}
+  .btn-ghost{
+    border-color:var(--line-bright);
+    color:var(--text-primary);
+  }
+  .btn-ghost:hover{border-color:var(--signal); color:var(--signal);}
+  .btn-small{padding:9px 16px; font-size:12px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:110px;
+    padding-bottom:60px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:48px;
+    align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(34px, 4.4vw, 54px);
+    margin:20px 0 22px;
+    color:var(--text-primary);
+  }
+  .hero h1 span{color:var(--copper-bright);}
+  .hero p.lede{
+    font-size:17px;
+    color:var(--text-muted);
+    max-width:520px;
+    margin-bottom:34px;
+  }
+  .hero-ctas{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:28px;}
+  .trust-line{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:0.02em;
+    border-left:2px solid var(--line-bright);
+    padding-left:12px;
+  }
+
+  .diagram-wrap{
+    position:relative;
+    aspect-ratio:1/1;
+    max-width:520px;
+    margin:0 auto;
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{position:relative; padding:110px 0; z-index:1;}
+  .section-head{margin-bottom:56px; max-width:640px;}
+  .section-head h2{
+    font-size:clamp(26px,3vw,36px);
+    margin-top:14px;
+    color:var(--text-primary);
+  }
+  .section-head p{color:var(--text-muted); margin-top:14px; font-size:15.5px;}
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--line-bright) 20%, var(--line-bright) 80%, transparent);
+    position:relative;
+  }
+  .divider::before{
+    content:"";
+    position:absolute; top:-3px; left:50%;
+    width:7px; height:7px;
+    background:var(--copper);
+    transform:translateX(-50%) rotate(45deg);
+  }
+
+  /* ---------- SERVICES ---------- */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:24px;
+  }
+  .service-card{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:32px 28px;
+    transition:border-color .25s, transform .25s;
+  }
+  .service-card:hover{border-color:var(--copper); transform:translateY(-4px);}
+  .service-icon{
+    width:44px; height:44px;
+    margin-bottom:22px;
+    color:var(--signal);
+  }
+  .service-card h3{
+    font-size:18px;
+    color:var(--text-primary);
+    margin-bottom:6px;
+  }
+  .service-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-dim);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    margin-bottom:16px;
+    display:block;
+  }
+  .service-card ul{margin-top:16px;}
+  .service-card li{
+    font-size:14px;
+    color:var(--text-muted);
+    padding:8px 0;
+    border-top:1px solid var(--line);
+    display:flex;
+    gap:10px;
+  }
+  .service-card li:first-child{border-top:none;}
+  .service-card li::before{
+    content:"▸";
+    color:var(--copper);
+    flex-shrink:0;
+  }
+
+  /* ---------- PROCESS ---------- */
+
+  /* ---------- STATS TERMINAL ---------- */
+  .terminal{
+    background:#0c1110;
+    border:1px solid var(--line-bright);
+    border-radius:4px;
+    overflow:hidden;
+    box-shadow:0 0 60px rgba(95,216,196,0.05);
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:12px 16px;
+    background:var(--bg-panel-raised);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-dim);
+  }
+  .terminal-bar .tdot{width:10px; height:10px; border-radius:50%; background:var(--line-bright);}
+  .terminal-body{
+    padding:32px;
+    font-family:var(--mono);
+    font-size:14px;
+  }
+  .stat-line{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    align-items:baseline;
+  }
+  .stat-line:last-child{border-bottom:none;}
+  .stat-cmd{color:var(--text-dim);}
+  .stat-cmd::before{content:"$ "; color:var(--signal);}
+  .stat-val{color:var(--copper-bright); font-weight:700; font-size:20px;}
+  .cursor{
+    display:inline-block;
+    width:8px; height:16px;
+    background:var(--signal);
+    animation:blink 1s step-end infinite;
+    vertical-align:middle;
+    margin-left:2px;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .about-grid p{color:var(--text-muted); margin-bottom:16px; font-size:15.5px;}
+  .about-panel{
+    border:1px solid var(--line);
+    background:var(--bg-panel);
+    border-radius:3px;
+    padding:26px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .about-panel .row{display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--line);}
+  .about-panel .row:first-child{border-top:none;}
+  .about-panel .row span:last-child{color:var(--text-primary);}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{
+    display:grid;
+    grid-template-columns:0.9fr 1.1fr;
+    gap:48px;
+  }
+  .contact-info-item{margin-bottom:28px;}
+  .contact-info-item .label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:6px;
+  }
+  .contact-info-item .value{font-size:15.5px; color:var(--text-primary);}
+  .contact-info-item .value.muted{color:var(--text-muted); font-size:14px;}
+
+  form{
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:32px;
+  }
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  .field{margin-bottom:16px;}
+  .field label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-dim);
+    display:block; margin-bottom:8px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%;
+    background:#0c1110;
+    border:1px solid var(--line-bright);
+    border-radius:2px;
+    padding:12px 14px;
+    color:var(--text-primary);
+    font-family:var(--sans);
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--signal);}
+  .field textarea{resize:vertical; min-height:100px;}
+  .form-note{
+    font-family:var(--mono); font-size:12px; color:var(--text-dim); margin-top:14px;
+  }
+  .form-success{
+    display:none;
+    font-family:var(--mono); font-size:13px; color:var(--signal);
+    padding:14px; border:1px solid var(--signal); border-radius:2px; margin-top:16px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:36px 0;
+  }
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+  }
+  .footer-links{display:flex; gap:26px; font-family:var(--mono); font-size:12px; color:var(--text-dim);}
+  .footer-links a:hover{color:var(--signal);}
+  .copyright{font-family:var(--mono); font-size:12px; color:var(--text-dim);}
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, .btn:focus-visible{
+    outline:2px solid var(--signal); outline-offset:2px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:920px){
+    .nav-links{display:none;}
+    .hero-grid{grid-template-columns:1fr;}
+    .diagram-wrap{max-width:380px; margin-top:20px;}
+    .services-grid{grid-template-columns:1fr;}
+    .about-grid{grid-template-columns:1fr;}
+    .contact-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+  }
+  @media (max-width:560px){
+    .hero-ctas{flex-direction:column; align-items:stretch;}
+    .wrap{padding:0 20px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+    html{scroll-behavior:auto;}
+  }
+
+/* ---------- PRODUCTS PAGE ---------- */
+.page-banner{
+  padding:150px 0 70px;
+  border-bottom:1px solid var(--line);
+}
+.page-banner h1{
+  font-size:clamp(30px,4vw,46px);
+  margin:16px 0 18px;
+  color:var(--text-primary);
+  max-width:760px;
+}
+.page-banner p{
+  color:var(--text-muted);
+  font-size:16px;
+  max-width:600px;
+}
+
+.category-block{padding:80px 0;}
+.category-block + .category-block{border-top:1px solid var(--line);}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:24px;
+}
+.product-card{
+  background:var(--bg-panel);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  transition:border-color .25s, transform .25s;
+}
+.product-card:hover{border-color:var(--copper); transform:translateY(-4px);}
+.product-icon{
+  width:38px; height:38px;
+  color:var(--signal);
+  margin-bottom:18px;
+}
+.product-card h3{
+  font-size:16.5px;
+  color:var(--text-primary);
+  margin-bottom:8px;
+}
+.product-desc{
+  font-size:13.5px;
+  color:var(--text-muted);
+  margin-bottom:18px;
+}
+.product-specs{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--text-dim);
+  margin-bottom:20px;
+  flex-grow:1;
+}
+.product-specs .spec-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:7px 0;
+  border-top:1px solid var(--line);
+}
+.product-specs .spec-row:first-child{border-top:none;}
+.product-specs .spec-row span:last-child{color:var(--text-muted); text-align:right;}
+.product-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-top:16px;
+  border-top:1px solid var(--line);
+}
+.product-price{
+  font-family:var(--mono);
+  font-size:13px;
+  color:var(--copper-bright);
+  font-weight:700;
+}
+.product-price span{
+  display:block;
+  font-size:10px;
+  color:var(--text-dim);
+  font-weight:400;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+}
+
+.cta-banner{
+  text-align:center;
+  padding:90px 0;
+  border-top:1px solid var(--line);
+}
+.cta-banner h2{
+  font-size:clamp(22px,2.8vw,30px);
+  margin:14px 0 24px;
+  color:var(--text-primary);
+}
+
+@media (max-width:920px){
+  .product-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo"><span class="dot"></span>EXPERT INC.</a>
+    <nav class="nav-links">
+      <a href="#services">Services</a>
+      <a href="products.html">Products</a>
+      <a href="#why-us">Why Us</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:22px;">
+      <div class="nav-status"><span class="pulse-dot"></span>Systems Online</div>
+      <a href="#contact" class="btn btn-primary btn-small">Get a Quote</a>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Cybersecurity · Hardware · Networking</div>
+      <h1>We secure what we build,<br>and build what we <span>secure</span>.</h1>
+      <p class="lede">Expert Inc. designs, installs, and defends the infrastructure your business runs on — from the switch in the server closet to the firewall at the edge of your network.</p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Request a Security Audit</a>
+        <a href="#services" class="btn btn-ghost">See Our Services</a>
+      </div>
+      <p class="trust-line">Trusted by clinics, law firms, and manufacturers to keep their systems online and their data closed.</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <svg viewBox="0 0 500 500" width="100%" height="100%" role="img" aria-label="Diagram showing security, hardware, and networking nodes connected to a central Expert Inc. node">
+        <defs>
+          <marker id="dotend" markerWidth="6" markerHeight="6" refX="3" refY="3">
+            <circle cx="3" cy="3" r="2.5" fill="#5fd8c4"/>
+          </marker>
+        </defs>
+
+        <!-- static base traces -->
+        <g fill="none" stroke="#222b25" stroke-width="1.5">
+          <path d="M 250 250 L 250 90"/>
+          <path d="M 250 250 L 108 330"/>
+          <path d="M 250 250 L 392 330"/>
+          <circle cx="250" cy="250" r="150" stroke="#1a221d" stroke-dasharray="2 6"/>
+        </g>
+
+        <!-- animated pulse traces -->
+        <g fill="none" stroke="#c9884f" stroke-width="2">
+          <path d="M 250 250 L 250 90" stroke-dasharray="8 220" stroke-dashoffset="0">
+            <animate attributeName="stroke-dashoffset" from="0" to="-228" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 250 250 L 108 330" stroke-dasharray="8 220" stroke-dashoffset="0">
+            <animate attributeName="stroke-dashoffset" from="0" to="-228" dur="3.6s" repeatCount="indefinite"/>
+          </path>
+          <path d="M 250 250 L 392 330" stroke-dasharray="8 220" stroke-dashoffset="0">
+            <animate attributeName="stroke-dashoffset" from="0" to="-228" dur="4.2s" repeatCount="indefinite"/>
+          </path>
+        </g>
+
+        <!-- center node -->
+        <g>
+          <rect x="205" y="205" width="90" height="90" rx="4" fill="#0f1512" stroke="#c9884f" stroke-width="1.5" transform="rotate(45 250 250)"/>
+          <text x="250" y="246" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#e5aa74" letter-spacing="1">EXPERT</text>
+          <text x="250" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#e5aa74" letter-spacing="1">INC.</text>
+        </g>
+
+        <!-- SEC node -->
+        <g>
+          <circle cx="250" cy="90" r="38" fill="#0f1512" stroke="#5fd8c4" stroke-width="1.5"/>
+          <path d="M 250 74 L 264 80 L 264 92 C 264 100 258 106 250 108 C 242 106 236 100 236 92 L 236 80 Z" fill="none" stroke="#5fd8c4" stroke-width="1.6"/>
+          <text x="250" y="126" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b9690" letter-spacing="1">SECURITY</text>
+        </g>
+
+        <!-- HW node -->
+        <g>
+          <circle cx="108" cy="330" r="38" fill="#0f1512" stroke="#5fd8c4" stroke-width="1.5"/>
+          <rect x="94" y="316" width="28" height="28" rx="2" fill="none" stroke="#5fd8c4" stroke-width="1.6"/>
+          <circle cx="108" cy="330" r="6" fill="none" stroke="#5fd8c4" stroke-width="1.4"/>
+          <text x="108" y="366" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b9690" letter-spacing="1">HARDWARE</text>
+        </g>
+
+        <!-- NET node -->
+        <g>
+          <circle cx="392" cy="330" r="38" fill="#0f1512" stroke="#5fd8c4" stroke-width="1.5"/>
+          <circle cx="392" cy="316" r="3.4" fill="#5fd8c4"/>
+          <circle cx="380" cy="340" r="3.4" fill="#5fd8c4"/>
+          <circle cx="404" cy="340" r="3.4" fill="#5fd8c4"/>
+          <path d="M 392 316 L 380 340 M 392 316 L 404 340 M 380 340 L 404 340" stroke="#5fd8c4" stroke-width="1.2"/>
+          <text x="392" y="366" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8b9690" letter-spacing="1">NETWORKING</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ================= SERVICES ================= -->
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">What we do</div>
+      <h2>Four disciplines. One team.</h2>
+      <p>Most vendors hand you off between a security firm, a repair shop, a network installer, and a backup vendor. We do all four, so nothing falls through the cracks between them.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M22 4 L36 10 V21 C36 30 30 36 22 40 C14 36 8 30 8 21 V10 Z"/>
+          <path d="M16 22 L20 26 L29 16"/>
+        </svg>
+        <span class="service-tag">01 — Cyber Security</span>
+        <h3>Cyber Security</h3>
+        <ul>
+          <li>Vulnerability assessments &amp; penetration testing</li>
+          <li>24/7 threat monitoring &amp; incident response</li>
+          <li>Employee security awareness training</li>
+          <li>Compliance support (HIPAA, PCI-DSS, SOC 2)</li>
+        </ul>
+      </div>
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6">
+          <rect x="12" y="12" width="20" height="20" rx="2"/>
+          <rect x="17" y="17" width="10" height="10" rx="1"/>
+          <path d="M22 4 V12 M22 32 V40 M4 22 H12 M32 22 H40 M9 9 L14 14 M35 9 L30 14 M9 35 L14 30 M35 35 L30 30"/>
+        </svg>
+        <span class="service-tag">02 — Computer Hardware</span>
+        <h3>Computer Hardware</h3>
+        <ul>
+          <li>Custom workstation &amp; server builds</li>
+          <li>Hardware diagnostics &amp; repair</li>
+          <li>Fleet procurement &amp; lifecycle management</li>
+          <li>Data recovery &amp; secure device disposal</li>
+        </ul>
+      </div>
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="10" cy="10" r="4"/>
+          <circle cx="34" cy="10" r="4"/>
+          <circle cx="22" cy="34" r="4"/>
+          <path d="M13 12 L19 30 M31 12 L25 30 M14 10 H30"/>
+        </svg>
+        <span class="service-tag">03 — Networking</span>
+        <h3>Networking</h3>
+        <ul>
+          <li>Network design &amp; structured cabling</li>
+          <li>Firewall, router &amp; switch configuration</li>
+          <li>Wireless site surveys &amp; deployment</li>
+          <li>VPN &amp; secure remote access setup</li>
+        </ul>
+      </div>
+
+      <div class="service-card">
+        <svg class="service-icon" viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1.6">
+          <ellipse cx="18" cy="10" rx="13" ry="4.5"/>
+          <path d="M5 10 V30 C5 32.5 10.8 34.5 18 34.5 C19.3 34.5 20.6 34.4 21.8 34.3"/>
+          <path d="M5 20 C5 22.5 10.8 24.5 18 24.5 C19.6 24.5 21.1 24.4 22.5 24.2"/>
+          <rect x="24" y="24" width="16" height="14" rx="2" fill="#0f1512"/>
+          <path d="M27 24 V21 a5 5 0 0 1 10 0 V24"/>
+          <rect x="24" y="24" width="16" height="14" rx="2"/>
+          <circle cx="32" cy="30" r="1.6" fill="currentColor" stroke="none"/>
+          <path d="M32 31.6 V33.5" stroke-width="1.4"/>
+        </svg>
+        <span class="service-tag">04 — Backup &amp; Recovery</span>
+        <h3>Backup Storage &amp; Data Security</h3>
+        <ul>
+          <li>Automated on-site &amp; offsite (cloud) backup solutions</li>
+          <li>Encrypted storage with secure, tiered retention policies</li>
+          <li>Disaster recovery planning &amp; regular failover testing</li>
+          <li>Ransomware-resilient, versioned backup snapshots</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ================= WHY US / STATS ================= -->
+<section id="why-us">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Why Expert Inc.</div>
+      <h2>Numbers we track like a client would.</h2>
+      <p>We hold ourselves to the same metrics we'd want to see from any IT partner.</p>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+        <span style="margin-left:8px;">expert-inc — status</span>
+      </div>
+      <div class="terminal-body">
+        <div class="stat-line"><span class="stat-cmd">avg_response_time</span><span class="stat-val">&lt; 15 min</span></div>
+        <div class="stat-line"><span class="stat-cmd">client_uptime_avg</span><span class="stat-val">99.98%</span></div>
+        <div class="stat-line"><span class="stat-cmd">threats_blocked --ytd</span><span class="stat-val">12,400+</span></div>
+        <div class="stat-line"><span class="stat-cmd">certified_engineers</span><span class="stat-val">24</span></div>
+        <div class="stat-line"><span class="stat-cmd">backup_restore_success</span><span class="stat-val">100%</span></div>
+        <div class="stat-line"><span class="stat-cmd">status --check<span class="cursor"></span></span><span class="stat-val" style="color:var(--signal);">ALL SYSTEMS OK</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ================= ABOUT ================= -->
+<section id="about">
+  <div class="wrap about-grid">
+    <div>
+      <div class="eyebrow">About Expert Inc.</div>
+      <h2 style="font-size:clamp(24px,2.8vw,32px); margin-top:14px; margin-bottom:20px;">Started on a repair bench. Built for the whole stack.</h2>
+      <p>Expert Inc. began as a two-person repair bench fixing machines other shops had given up on. As clients kept asking us to also secure their networks and lock down their data, the bench grew into a full IT partner.</p>
+      <p>Today we're a team of security analysts, hardware technicians, and network engineers who'd rather prevent an incident than write a report about one. We keep every engagement small enough that you talk to the person doing the work, not an account manager.</p>
+    </div>
+    <div class="about-panel">
+      <div class="row"><span>founded</span><span>Two-person repair bench, grown in-house</span></div>
+      <div class="row"><span>focus</span><span>Security · Hardware · Networking</span></div>
+      <div class="row"><span>engagement_model</span><span>Direct access to your engineers</span></div>
+      <div class="row"><span>coverage</span><span>Remote monitoring, 24/7</span></div>
+      <div class="row"><span>compliance</span><span>HIPAA · PCI-DSS · SOC 2 support</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<!-- ================= CONTACT ================= -->
+<section id="contact">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Get in touch</div>
+      <h2>Tell us what's breaking, or what you want to protect.</h2>
+      <p>Reach out for a free initial consultation. We'll reply within one business day.</p>
+    </div>
+
+    <div class="contact-grid">
+      <div>
+        <div class="contact-info-item">
+          <div class="label">Email</div>
+          <div class="value">contact@expertinc.example</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="label">Phone</div>
+          <div class="value">(555) 010-4471</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="label">Hours</div>
+          <div class="value muted">Mon–Fri, 8:00–18:00 · 24/7 emergency response line for active-client incidents</div>
+        </div>
+        <div class="contact-info-item">
+          <div class="label">Service area</div>
+          <div class="value muted">On-site support within the region · Remote support available anywhere</div>
+        </div>
+      </div>
+
+      <form id="contact-form">
+        <div class="form-row">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required placeholder="Jordan Lee">
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="you@company.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label for="company">Company</label>
+            <input type="text" id="company" name="company" placeholder="Company name">
+          </div>
+          <div class="field">
+            <label for="interest">Interested in</label>
+            <select id="interest" name="interest">
+              <option>Cybersecurity</option>
+              <option>Computer Hardware</option>
+              <option>Networking</option>
+              <option>Backup &amp; Data Security</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="What's going on with your systems?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Send Message</button>
+        <p class="form-note">This form doesn't send yet — connect it to your email or CRM before launch.</p>
+        <div class="form-success" id="form-success">&gt; message queued. we'll respond within one business day.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+<a href="index.html" class="logo" style="font-size:14px;"><span class="dot"></span>EXPERT INC.</a>
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="products.html">Products</a>
+      <a href="#why-us">Why Us</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="copyright">© 2026 Expert Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('contact-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    document.getElementById('form-success').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
