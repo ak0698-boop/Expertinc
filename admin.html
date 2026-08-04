@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Panel — Expert Inc.</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F7F5; --paper-raised:#FFFFFF; --ink:#101820;
+    --navy:#163A5C; --navy-deep:#0E2740; --navy-soft:#EAF0F5;
+    --orange:#E8541E; --mint:#1F8A70; --red:#D6362C;
+    --steel:#57677A; --steel-light:#8A96A3; --line:#E2E6E4;
+    --display:'Space Grotesk', sans-serif; --body:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:14px;}
+  h1,h2,h3{font-family:var(--display); font-weight:700; margin:0;}
+
+  /* LOGIN SCREEN */
+  #login-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+  .login-box{background:#fff; border:1px solid var(--line); border-radius:14px; padding:40px; max-width:360px; width:100%;}
+  .login-box h1{font-size:20px; margin-bottom:6px;}
+  .login-box .sub{color:var(--steel); font-size:13px; margin-bottom:24px;}
+  .login-box input{width:100%; padding:11px 14px; border:1.5px solid var(--line); border-radius:8px; margin-bottom:14px; font-family:var(--body); font-size:14px;}
+  .login-box .btn{width:100%;}
+  .login-error{color:var(--red); font-size:13px; margin-top:10px; display:none;}
+
+  /* MAIN APP (same as before) */
+  #app-screen{display:none;}
+  .app-header{background:var(--navy-deep); color:#fff; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  .app-header h1{font-size:18px;}
+  .app-header .sub{color:#9FB2C2; font-size:12px; margin-top:2px;}
+  .logout-btn{background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px 14px; border-radius:7px; font-size:13px; cursor:pointer; font-family:var(--body);}
+
+  .tabs{display:flex; gap:6px; background:#fff; border-bottom:1px solid var(--line); padding:0 24px; overflow-x:auto;}
+  .tab-btn{padding:14px 18px; background:none; border:none; cursor:pointer; font-family:var(--body); font-weight:600; font-size:14px; color:var(--steel); border-bottom:3px solid transparent; white-space:nowrap;}
+  .tab-btn.active{color:var(--navy); border-bottom-color:var(--orange);}
+
+  .view{display:none; padding:24px; max-width:1200px; margin:0 auto;}
+  .view.active{display:block;}
+
+  .stats-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px;}
+  .stat-card{background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px;}
+  .stat-card .val{font-family:var(--display); font-size:28px; font-weight:700; color:var(--navy);}
+  .stat-card .label{font-size:12.5px; color:var(--steel); margin-top:4px;}
+
+  .panel{background:#fff; border:1px solid var(--line); border-radius:12px; padding:20px; margin-bottom:20px;}
+  .panel-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+  .panel-head h2{font-size:17px;}
+
+  .btn{font-family:var(--body); font-weight:600; font-size:13.5px; padding:9px 16px; border-radius:7px; border:1.5px solid transparent; cursor:pointer; display:inline-flex; align-items:center; gap:6px;}
+  .btn-primary{background:var(--orange); color:#fff;}
+  .btn-primary:hover{background:#c9480f;}
+  .btn-outline{border-color:var(--line); background:#fff; color:var(--ink);}
+  .btn-outline:hover{border-color:var(--navy);}
+  .btn-danger{color:var(--red); background:none; border:none; cursor:pointer; font-size:13px;}
+  .btn-small{padding:5px 10px; font-size:12.5px;}
+
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--steel-light); padding:8px 10px; border-bottom:1.5px solid var(--line);}
+  td{padding:12px 10px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .empty-row td{text-align:center; color:var(--steel-light); padding:30px 10px;}
+
+  .badge{display:inline-block; padding:3px 10px; border-radius:100px; font-size:11.5px; font-weight:600;}
+  .badge-lead{background:#FFF3E0; color:#B5651D;}
+  .badge-client{background:#EAF6F2; color:var(--mint);}
+  .badge-lost{background:#F3F0F5; color:#8A7A99;}
+  .badge-open{background:#FDEAE1; color:var(--orange);}
+  .badge-progress{background:#EAF0F5; color:var(--navy);}
+  .badge-resolved{background:#EAF6F2; color:var(--mint);}
+  .badge-high{background:#FCEAEA; color:var(--red);}
+  .badge-medium{background:#FFF3E0; color:#B5651D;}
+  .badge-low{background:#EAF0F5; color:var(--steel);}
+  .ticket-num{font-family:var(--display); font-weight:700; color:var(--navy);}
+
+  .add-form{display:none; background:var(--navy-soft); border-radius:10px; padding:18px; margin-bottom:18px;}
+  .add-form.open{display:block;}
+  .form-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:12px;}
+  .form-grid label{display:block; font-size:11.5px; font-weight:600; color:var(--steel); margin-bottom:5px;}
+  .form-grid input, .form-grid select, .form-grid textarea{width:100%; padding:8px 10px; border:1.5px solid var(--line); border-radius:6px; font-family:var(--body); font-size:13.5px;}
+  .form-grid textarea{grid-column:1/-1; min-height:60px; resize:vertical;}
+
+  .filter-row{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .filter-btn{padding:6px 14px; border-radius:100px; border:1.5px solid var(--line); background:#fff; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--steel);}
+  .filter-btn.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .loading{text-align:center; padding:40px; color:var(--steel-light);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>Team Panel</h1>
+    <div class="sub">Expert Inc. — Sign in to continue</div>
+    <input type="email" id="login-email" placeholder="Email">
+    <input type="password" id="login-password" placeholder="Password">
+    <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+    <p class="login-error" id="login-error">Invalid email or password.</p>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen">
+  <div class="app-header">
+    <div>
+      <h1>Expert Inc. — Team Panel</h1>
+      <div class="sub">CRM · Support Tickets</div>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+    <button class="tab-btn" data-tab="crm">CRM</button>
+    <button class="tab-btn" data-tab="tickets">Tickets</button>
+  </div>
+
+  <div class="view active" id="view-dashboard">
+    <div class="stats-row" id="dashboard-stats"></div>
+    <div class="panel">
+      <div class="panel-head"><h2>Recent Tickets</h2></div>
+      <table><tbody id="dashboard-recent-tickets"></tbody></table>
+    </div>
+  </div>
+
+  <div class="view" id="view-crm">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Leads &amp; Clients</h2>
+        <button class="btn btn-primary" onclick="toggleForm('lead-form')">+ Add Lead/Client</button>
+      </div>
+      <div class="add-form" id="lead-form">
+        <div class="form-grid">
+          <div><label>Name</label><input id="lead-name" placeholder="Contact name"></div>
+          <div><label>Company</label><input id="lead-company" placeholder="Company name"></div>
+          <div><label>Phone</label><input id="lead-phone" placeholder="+91..."></div>
+          <div><label>Email</label><input id="lead-email" placeholder="email@company.com"></div>
+          <div><label>Status</label>
+            <select id="lead-status">
+              <option value="lead">Lead</option>
+              <option value="client">Client</option>
+              <option value="lost">Lost</option>
+            </select>
+          </div>
+          <textarea id="lead-notes" placeholder="Notes..."></textarea>
+        </div>
+        <button class="btn btn-primary btn-small" onclick="addLead()">Save</button>
+        <button class="btn btn-outline btn-small" onclick="toggleForm('lead-form')">Cancel</button>
+      </div>
+      <table>
+        <thead><tr><th>Name</th><th>Company</th><th>Contact</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+        <tbody id="leads-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="view" id="view-tickets">
+    <div class="panel">
+      <div class="panel-head"><h2>Support Tickets</h2></div>
+      <div class="filter-row" id="ticket-filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="open">Open</button>
+        <button class="filter-btn" data-filter="progress">In Progress</button>
+        <button class="filter-btn" data-filter="resolved">Resolved</button>
+      </div>
+      <table>
+        <thead><tr><th>Ticket #</th><th>Client</th><th>Contact</th><th>Issue</th><th>Priority</th><th>Status</th><th>Date</th><th></th></tr></thead>
+        <tbody id="tickets-table"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA80s9jtewt93rsveqQyXD2xslm1chJuME",
+    authDomain: "expertinc-tools.firebaseapp.com",
+    projectId: "expertinc-tools",
+    storageBucket: "expertinc-tools.firebasestorage.app",
+    messagingSenderId: "86282664413",
+    appId: "1:86282664413:web:ec3374c7ffe1d99e70de34"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let leads = [];
+  let tickets = [];
+  let ticketFilter = 'all';
+
+  function esc(s){ return (s||'').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // ---- AUTH ----
+  window.doLogin = async function(){
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('login-error');
+    errorEl.style.display = 'none';
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      errorEl.style.display = 'block';
+    }
+  };
+  window.doLogout = function(){ signOut(auth); };
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      startListeners();
+    } else {
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app-screen').style.display = 'none';
+    }
+  });
+
+  let listenersStarted = false;
+  function startListeners(){
+    if (listenersStarted) return;
+    listenersStarted = true;
+
+    onSnapshot(collection(db, "leads"), (snap) => {
+      leads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderAll();
+    });
+
+    const ticketsQuery = query(collection(db, "tickets"), orderBy("createdAt", "desc"));
+    onSnapshot(ticketsQuery, (snap) => {
+      tickets = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderAll();
+    });
+  }
+
+  // ---- FORMS ----
+  window.toggleForm = function(id){ document.getElementById(id).classList.toggle('open'); };
+
+  window.addLead = async function(){
+    const name = document.getElementById('lead-name').value.trim();
+    if(!name){ alert('Name is required'); return; }
+    await addDoc(collection(db, "leads"), {
+      name,
+      company: document.getElementById('lead-company').value.trim(),
+      phone: document.getElementById('lead-phone').value.trim(),
+      email: document.getElementById('lead-email').value.trim(),
+      status: document.getElementById('lead-status').value,
+      notes: document.getElementById('lead-notes').value.trim(),
+      createdAt: new Date().toISOString()
+    });
+    ['lead-name','lead-company','lead-phone','lead-email','lead-notes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('lead-form').classList.remove('open');
+  };
+  window.deleteLead = async function(id){
+    if(!confirm('Delete this lead/client?')) return;
+    await deleteDoc(doc(db, "leads", id));
+  };
+  window.cycleLeadStatus = async function(id){
+    const order = ['lead','client','lost'];
+    const l = leads.find(x => x.id === id);
+    const next = order[(order.indexOf(l.status)+1) % order.length];
+    await updateDoc(doc(db, "leads", id), { status: next });
+  };
+
+  window.cycleTicketStatus = async function(id){
+    const order = ['open','progress','resolved'];
+    const t = tickets.find(x => x.id === id);
+    const next = order[(order.indexOf(t.status)+1) % order.length];
+    await updateDoc(doc(db, "tickets", id), { status: next });
+  };
+  window.deleteTicket = async function(id){
+    if(!confirm('Delete this ticket?')) return;
+    await deleteDoc(doc(db, "tickets", id));
+  };
+
+  // ---- RENDER ----
+  function badgeForLeadStatus(s){
+    const map = {lead:['Lead','badge-lead'], client:['Client','badge-client'], lost:['Lost','badge-lost']};
+    return `<span class="badge ${map[s][1]}">${map[s][0]}</span>`;
+  }
+  function badgeForTicketStatus(s){
+    const map = {open:['Open','badge-open'], progress:['In Progress','badge-progress'], resolved:['Resolved','badge-resolved']};
+    return `<span class="badge ${map[s][1]}">${map[s][0]}</span>`;
+  }
+  function badgeForPriority(p){
+    const map = {high:['High','badge-high'], medium:['Medium','badge-medium'], low:['Low','badge-low']};
+    return `<span class="badge ${map[p][1]}">${map[p][0]}</span>`;
+  }
+  function fmtDate(v){
+    if (!v) return '';
+    if (typeof v === 'string') return new Date(v).toLocaleDateString('en-IN');
+    if (v.toDate) return v.toDate().toLocaleDateString('en-IN');
+    return '';
+  }
+
+  function renderAll(){
+    renderDashboard();
+    renderLeads();
+    renderTickets();
+  }
+
+  function renderDashboard(){
+    const openTickets = tickets.filter(t => t.status !== 'resolved').length;
+    const clients = leads.filter(l => l.status === 'client').length;
+    document.getElementById('dashboard-stats').innerHTML = `
+      <div class="stat-card"><div class="val">${leads.length}</div><div class="label">Total Leads / Clients</div></div>
+      <div class="stat-card"><div class="val">${clients}</div><div class="label">Active Clients</div></div>
+      <div class="stat-card"><div class="val">${openTickets}</div><div class="label">Open Tickets</div></div>
+      <div class="stat-card"><div class="val">${tickets.length}</div><div class="label">Total Tickets</div></div>
+    `;
+    const recent = tickets.slice(0,5);
+    document.getElementById('dashboard-recent-tickets').innerHTML = recent.length
+      ? recent.map(t => `<tr><td class="ticket-num">${esc(t.ticketNumber)}</td><td>${esc(t.name)}</td><td>${esc(t.message||'').slice(0,60)}</td><td>${badgeForPriority(t.priority)}</td><td>${badgeForTicketStatus(t.status)}</td></tr>`).join('')
+      : `<tr class="empty-row"><td colspan="5">No tickets yet</td></tr>`;
+  }
+
+  function renderLeads(){
+    document.getElementById('leads-table').innerHTML = leads.length ? leads.map(l => `
+      <tr>
+        <td><strong>${esc(l.name)}</strong></td>
+        <td>${esc(l.company)}</td>
+        <td>${esc(l.phone)}${l.phone && l.email ? '<br>' : ''}${esc(l.email)}</td>
+        <td style="cursor:pointer" onclick="cycleLeadStatus('${l.id}')">${badgeForLeadStatus(l.status)}</td>
+        <td>${esc(l.notes)}</td>
+        <td><button class="btn-danger" onclick="deleteLead('${l.id}')">Delete</button></td>
+      </tr>
+    `).join('') : `<tr class="empty-row"><td colspan="6">No leads or clients yet.</td></tr>`;
+  }
+
+  function renderTickets(){
+    const filtered = ticketFilter === 'all' ? tickets : tickets.filter(t => t.status === ticketFilter);
+    document.getElementById('tickets-table').innerHTML = filtered.length ? filtered.map(t => `
+      <tr>
+        <td class="ticket-num">${esc(t.ticketNumber)}</td>
+        <td><strong>${esc(t.name)}</strong>${t.company ? '<br><span style="color:var(--steel-light);font-size:12px;">'+esc(t.company)+'</span>' : ''}</td>
+        <td>${esc(t.phone)}${t.phone && t.email ? '<br>' : ''}${esc(t.email)}</td>
+        <td>${esc(t.message)}</td>
+        <td>${badgeForPriority(t.priority)}</td>
+        <td style="cursor:pointer" onclick="cycleTicketStatus('${t.id}')">${badgeForTicketStatus(t.status)}</td>
+        <td>${fmtDate(t.createdAt)}</td>
+        <td><button class="btn-danger" onclick="deleteTicket('${t.id}')">Delete</button></td>
+      </tr>
+    `).join('') : `<tr class="empty-row"><td colspan="8">No tickets in this view.</td></tr>`;
+  }
+
+  // ---- TABS ----
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+  document.querySelectorAll('#ticket-filters .filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#ticket-filters .filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      ticketFilter = btn.dataset.filter;
+      renderTickets();
+    });
+  });
+</script>
+
+</body>
+</html>

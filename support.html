@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Support — Expert Inc.</title>
+<meta name="description" content="Submit a technical support request to Expert Inc. We'll get back to you within one business day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F7F5; --paper-raised:#FFFFFF; --ink:#101820;
+    --navy:#163A5C; --navy-deep:#0E2740; --navy-soft:#EAF0F5;
+    --orange:#E8541E; --mint:#1F8A70; --red:#D6362C;
+    --steel:#57677A; --steel-light:#8A96A3; --line:#E2E6E4;
+    --display:'Space Grotesk', sans-serif; --body:'Inter', sans-serif; --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink); font-family:var(--body); line-height:1.6;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:680px; margin:0 auto; padding:0 24px;}
+  h1,h2{font-family:var(--display); font-weight:700; color:var(--ink);}
+
+  header{position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(246,247,245,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+  .nav{max-width:1180px; margin:0 auto; padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:76px;}
+  .logo{font-family:var(--display); font-weight:700; font-size:18px; display:flex; align-items:center; gap:10px;}
+  .logo .mark{width:30px; height:30px; background:var(--navy); border-radius:7px; position:relative; flex-shrink:0;}
+  .logo .mark::after{content:""; position:absolute; inset:8px; background:var(--orange); border-radius:2px;}
+
+  .page-head{padding:150px 0 30px; text-align:center;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--navy);
+    display:inline-flex; align-items:center; gap:8px; background:var(--navy-soft); padding:6px 14px; border-radius:100px;
+  }
+  .eyebrow::before{content:""; width:6px; height:6px; border-radius:50%; background:var(--orange);}
+  .page-head h1{font-size:clamp(26px,4vw,36px); margin:16px 0 12px;}
+  .page-head p{color:var(--steel); font-size:15.5px;}
+
+  form{background:var(--paper-raised); border:1px solid var(--line); border-radius:14px; padding:32px; margin:24px 0 60px;}
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;}
+  .field{margin-bottom:16px;}
+  .field label{font-size:13px; font-weight:600; display:block; margin-bottom:7px;}
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--paper); border:1.5px solid var(--line); border-radius:8px; padding:12px 14px;
+    font-family:var(--body); font-size:14px; color:var(--ink); outline:none; transition:border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--navy);}
+  .field textarea{resize:vertical; min-height:110px;}
+
+  .btn{
+    font-family:var(--body); font-weight:600; font-size:15px; padding:13px 24px; border-radius:8px;
+    cursor:pointer; border:none; width:100%; background:var(--orange); color:#fff;
+  }
+  .btn:hover{background:#c9480f;}
+  .btn:disabled{opacity:0.6; cursor:not-allowed;}
+
+  .success-box{display:none; text-align:center; padding:50px 20px;}
+  .success-box.show{display:block;}
+  .success-box .ticket-num{
+    font-family:var(--mono); font-size:26px; font-weight:700; color:var(--navy);
+    background:var(--navy-soft); display:inline-block; padding:14px 28px; border-radius:10px; margin:20px 0;
+  }
+  .error-msg{color:var(--red); font-size:13.5px; margin-top:10px; display:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html" class="logo"><span class="mark"></span>EXPERT INC.</a>
+  </div>
+</header>
+
+<section class="page-head">
+  <div class="wrap">
+    <div class="eyebrow">Technical Support</div>
+    <h1>Need help? Submit a ticket.</h1>
+    <p>Tell us what's going on — we'll get back to you within one business day, sooner for urgent issues.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <form id="support-form">
+    <div class="form-row">
+      <div class="field"><label for="s-name">Name</label><input type="text" id="s-name" required placeholder="Your name"></div>
+      <div class="field"><label for="s-email">Email</label><input type="email" id="s-email" required placeholder="you@company.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label for="s-phone">Phone</label><input type="tel" id="s-phone" required placeholder="+91 98765 43210"></div>
+      <div class="field"><label for="s-company">Company</label><input type="text" id="s-company" placeholder="Company name"></div>
+    </div>
+    <div class="field">
+      <label for="s-priority">How urgent is this?</label>
+      <select id="s-priority">
+        <option value="low">Low — general question</option>
+        <option value="medium" selected>Medium — affecting work, not urgent</option>
+        <option value="high">High — system down / urgent</option>
+      </select>
+    </div>
+    <div class="field"><label for="s-message">Describe the issue</label><textarea id="s-message" required placeholder="What's going on with your systems?"></textarea></div>
+    <button type="submit" class="btn" id="submit-btn">Submit Ticket</button>
+    <p class="error-msg" id="error-msg">Something went wrong. Please try again or WhatsApp us at +91 97182 70873.</p>
+  </form>
+
+  <div class="success-box" id="success-box">
+    <h2>Ticket submitted ✅</h2>
+    <p>Your reference number is:</p>
+    <div class="ticket-num" id="ticket-number"></div>
+    <p>Save this number for reference. We'll email you at the address you provided within one business day.</p>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, doc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA80s9jtewt93rsveqQyXD2xslm1chJuME",
+    authDomain: "expertinc-tools.firebaseapp.com",
+    projectId: "expertinc-tools",
+    storageBucket: "expertinc-tools.firebasestorage.app",
+    messagingSenderId: "86282664413",
+    appId: "1:86282664413:web:ec3374c7ffe1d99e70de34"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function getNextTicketNumber(){
+    const counterRef = doc(db, "counters", "ticketCounter");
+    const newNumber = await runTransaction(db, async (transaction) => {
+      const counterDoc = await transaction.get(counterRef);
+      let current = counterDoc.exists() ? counterDoc.data().value : 1000;
+      const next = current + 1;
+      transaction.set(counterRef, { value: next });
+      return next;
+    });
+    return "EXP-" + newNumber;
+  }
+
+  const form = document.getElementById('support-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const errorMsg = document.getElementById('error-msg');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    errorMsg.style.display = 'none';
+
+    try {
+      const ticketNumber = await getNextTicketNumber();
+
+      await addDoc(collection(db, "tickets"), {
+        ticketNumber,
+        name: document.getElementById('s-name').value.trim(),
+        email: document.getElementById('s-email').value.trim(),
+        phone: document.getElementById('s-phone').value.trim(),
+        company: document.getElementById('s-company').value.trim(),
+        priority: document.getElementById('s-priority').value,
+        message: document.getElementById('s-message').value.trim(),
+        status: 'open',
+        createdAt: serverTimestamp()
+      });
+
+      document.getElementById('ticket-number').textContent = ticketNumber;
+      form.style.display = 'none';
+      document.getElementById('success-box').classList.add('show');
+
+    } catch (err) {
+      console.error(err);
+      errorMsg.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Ticket';
+    }
+  });
+</script>
+
+</body>
+</html>
