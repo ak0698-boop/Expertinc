@@ -176,6 +176,9 @@
       });
 
       // Notify the support team by email (best-effort; ticket is already saved either way)
+      const whatsappText = `New ticket ${ticketNumber}\nName: ${name}\nPhone: ${phone}\nPriority: ${priority}\nIssue: ${message}`;
+      const whatsappLink = "https://wa.me/?text=" + encodeURIComponent(whatsappText);
+
       emailjs.send("service_p4lpxi5", "template_7lziz6o", {
         ticket_number: ticketNumber,
         client_name: name,
@@ -183,7 +186,8 @@
         client_email: email,
         client_company: company,
         priority: priority,
-        issue_message: message
+        issue_message: message,
+        whatsapp_link: whatsappLink
       }).catch(err => console.error("Notification email failed:", err));
 
       document.getElementById('ticket-number').textContent = ticketNumber;
