@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --paper:#F6F7F5; --paper-raised:#FFFFFF; --ink:#101820;
@@ -134,6 +135,9 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // EmailJS setup
+  emailjs.init({ publicKey: "mMqKhug76RFv2VLxB" });
+
   async function getNextTicketNumber(){
     const counterRef = doc(db, "counters", "ticketCounter");
     const newNumber = await runTransaction(db, async (transaction) => {
@@ -158,18 +162,29 @@
 
     try {
       const ticketNumber = await getNextTicketNumber();
+      const name = document.getElementById('s-name').value.trim();
+      const email = document.getElementById('s-email').value.trim();
+      const phone = document.getElementById('s-phone').value.trim();
+      const company = document.getElementById('s-company').value.trim();
+      const priority = document.getElementById('s-priority').value;
+      const message = document.getElementById('s-message').value.trim();
 
       await addDoc(collection(db, "tickets"), {
-        ticketNumber,
-        name: document.getElementById('s-name').value.trim(),
-        email: document.getElementById('s-email').value.trim(),
-        phone: document.getElementById('s-phone').value.trim(),
-        company: document.getElementById('s-company').value.trim(),
-        priority: document.getElementById('s-priority').value,
-        message: document.getElementById('s-message').value.trim(),
+        ticketNumber, name, email, phone, company, priority, message,
         status: 'open',
         createdAt: serverTimestamp()
       });
+
+      // Notify the support team by email (best-effort; ticket is already saved either way)
+      emailjs.send("service_p4lpxi5", "template_7lziz6o", {
+        ticket_number: ticketNumber,
+        client_name: name,
+        client_phone: phone,
+        client_email: email,
+        client_company: company,
+        priority: priority,
+        issue_message: message
+      }).catch(err => console.error("Notification email failed:", err));
 
       document.getElementById('ticket-number').textContent = ticketNumber;
       form.style.display = 'none';

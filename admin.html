@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   :root{
     --paper:#F6F7F5; --paper-raised:#FFFFFF; --ink:#101820;
@@ -90,6 +91,18 @@
   .filter-btn{padding:6px 14px; border-radius:100px; border:1.5px solid var(--line); background:#fff; font-size:12.5px; font-weight:600; cursor:pointer; color:var(--steel);}
   .filter-btn.active{background:var(--navy); color:#fff; border-color:var(--navy);}
   .loading{text-align:center; padding:40px; color:var(--steel-light);}
+
+  /* REPLY MODAL */
+  .modal-overlay{display:none; position:fixed; inset:0; background:rgba(16,24,32,0.5); z-index:100; align-items:center; justify-content:center; padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:#fff; border-radius:14px; padding:28px; max-width:480px; width:100%;}
+  .modal-box h3{font-size:17px; margin-bottom:4px;}
+  .modal-box .modal-sub{color:var(--steel); font-size:13px; margin-bottom:18px;}
+  .modal-box textarea{width:100%; min-height:120px; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:var(--body); font-size:14px; resize:vertical; margin-bottom:14px;}
+  .modal-actions{display:flex; gap:10px; justify-content:flex-end;}
+  .reply-history{max-height:150px; overflow-y:auto; background:var(--paper); border-radius:8px; padding:10px 12px; margin-bottom:14px; font-size:12.5px; color:var(--steel);}
+  .reply-history .reply-item{padding:6px 0; border-bottom:1px solid var(--line);}
+  .reply-history .reply-item:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
@@ -178,13 +191,27 @@
   </div>
 </div>
 
+<!-- REPLY MODAL -->
+<div class="modal-overlay" id="reply-modal">
+  <div class="modal-box">
+    <h3 id="reply-modal-title">Reply to ticket</h3>
+    <p class="modal-sub" id="reply-modal-sub"></p>
+    <div class="reply-history" id="reply-history" style="display:none;"></div>
+    <textarea id="reply-text" placeholder="Type your reply to the client..."></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeReplyModal()">Cancel</button>
+      <button class="btn btn-primary" id="reply-send-btn" onclick="sendReply()">Send Reply</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
-    getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy
+    getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy, arrayUnion
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -199,6 +226,7 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  emailjs.init({ publicKey: "mMqKhug76RFv2VLxB" });
 
   let leads = [];
   let tickets = [];
@@ -288,6 +316,67 @@
     await deleteDoc(doc(db, "tickets", id));
   };
 
+  // ---- REPLY MODAL ----
+  let activeTicketId = null;
+
+  window.openReplyModal = function(id){
+    const t = tickets.find(x => x.id === id);
+    if (!t) return;
+    activeTicketId = id;
+    document.getElementById('reply-modal-title').textContent = `Reply to ${t.ticketNumber}`;
+    document.getElementById('reply-modal-sub').textContent = `${t.name} — ${t.email}`;
+    document.getElementById('reply-text').value = '';
+
+    const historyEl = document.getElementById('reply-history');
+    if (t.replies && t.replies.length) {
+      historyEl.style.display = 'block';
+      historyEl.innerHTML = t.replies.map(r => `<div class="reply-item"><strong>Reply sent:</strong> ${esc(r.text)}</div>`).join('');
+    } else {
+      historyEl.style.display = 'none';
+      historyEl.innerHTML = '';
+    }
+
+    document.getElementById('reply-modal').classList.add('open');
+  };
+
+  window.closeReplyModal = function(){
+    document.getElementById('reply-modal').classList.remove('open');
+    activeTicketId = null;
+  };
+
+  window.sendReply = async function(){
+    const text = document.getElementById('reply-text').value.trim();
+    if (!text) { alert('Please write a reply first.'); return; }
+    const t = tickets.find(x => x.id === activeTicketId);
+    if (!t) return;
+
+    const btn = document.getElementById('reply-send-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      await emailjs.send("service_p4lpxi5", "template_6k9mcnh", {
+        to_name: t.name,
+        to_email: t.email,
+        reply_message: text,
+        ticket_number: t.ticketNumber
+      });
+
+      await updateDoc(doc(db, "tickets", t.id), {
+        replies: arrayUnion({ text, sentAt: new Date().toISOString() }),
+        status: t.status === 'open' ? 'progress' : t.status
+      });
+
+      closeReplyModal();
+    } catch (err) {
+      console.error(err);
+      alert('Could not send the reply email. Please check your connection and try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Reply';
+    }
+  };
+
   // ---- RENDER ----
   function badgeForLeadStatus(s){
     const map = {lead:['Lead','badge-lead'], client:['Client','badge-client'], lost:['Lost','badge-lost']};
@@ -353,7 +442,10 @@
         <td>${badgeForPriority(t.priority)}</td>
         <td style="cursor:pointer" onclick="cycleTicketStatus('${t.id}')">${badgeForTicketStatus(t.status)}</td>
         <td>${fmtDate(t.createdAt)}</td>
-        <td><button class="btn-danger" onclick="deleteTicket('${t.id}')">Delete</button></td>
+        <td>
+          <button class="btn btn-primary btn-small" onclick="openReplyModal('${t.id}')">Reply</button>
+          <button class="btn-danger" onclick="deleteTicket('${t.id}')">Delete</button>
+        </td>
       </tr>
     `).join('') : `<tr class="empty-row"><td colspan="8">No tickets in this view.</td></tr>`;
   }
